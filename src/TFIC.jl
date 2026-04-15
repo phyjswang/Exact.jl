@@ -42,3 +42,35 @@ function getie(model::TFIC, T::Real)
     y(k) = 1/2*g*√(1+(J/2g)^2 + J/g * cos(k))
     return T^2 * 1/π * quadgk(k -> -y(k) / T^2 * tanh(y(k)/T), 0, π)[1]
 end
+
+"""
+Loschmidt rate function
+infinite-size transverse field Ising chain
+H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
+
+[Ref: PRB 87, 195104 (2013)]
+"""
+function getlrf(m0::TFIC, m1::TFIC, t::Real)
+    J = m0.J
+    J ≠ m1.J && error("J must be the same for both models by our convention.")
+    g0 = m0.g
+    g1 = m1.g
+    g0 *= 2/J
+    g1 *= 2/J
+    J /= 4
+
+    ε(g::Real,k::Real) = 2J* √((g-cos(k))^2 + sin(k)^2)
+
+    function θ(g::Real,k::Real)
+        θ1 = atan(sin(k) / (g-cos(k)))/2
+        if θ1 < 0
+            return θ1 + π/2
+        else
+            return θ1
+        end
+    end
+
+    φ(g0::Real,g1::Real,k::Real) = θ(g0,k) - θ(g1,k)
+
+    return 2*real(quadgk(k -> - 1 / 2π * log(cos(φ(g0,g1,k))^2 + sin(φ(g0,g1,k))^2 * exp(-2*1.0im*t*ε(g1,k))), 0, π)[1])
+end

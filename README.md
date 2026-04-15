@@ -1,6 +1,6 @@
 # Exact.jl
 
-Providing exact solutions for benchmarking in algorithm development.
+Provide exact solutions for benchmarking in algorithm development.
 
 # Models
 
@@ -8,3 +8,4 @@ Providing exact solutions for benchmarking in algorithm development.
   - Ground state energy
   - Helmholtz free energy
   - Internal energy
+  - Loschmidt rate function
