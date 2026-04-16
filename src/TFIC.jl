@@ -27,7 +27,8 @@ H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 """
 function getfe(model::TFIC, T::Real)
     @unpack J, g = model
-    return -T * (log(2) + 1/π * quadgk(k -> log(cosh(1/2/T*g*√(1+(J/2g)^2 + J/g * cos(k)))), 0, π)[1])
+    y = quadgk(k -> -T * 1/π * log(cosh(1/2/T*g*√(1+(J/2g)^2 + J/g * cos(k)))), 0, π)
+    return -T * log(2) + y[1], y[2]
 end
 
 """
@@ -40,7 +41,7 @@ H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 function getie(model::TFIC, T::Real)
     @unpack J, g = model
     y(k) = 1/2*g*√(1+(J/2g)^2 + J/g * cos(k))
-    return T^2 * 1/π * quadgk(k -> -y(k) / T^2 * tanh(y(k)/T), 0, π)[1]
+    return quadgk(k ->T^2 * 1/π *  -y(k) / T^2 * tanh(y(k)/T), 0, π)
 end
 
 """
@@ -72,5 +73,7 @@ function getlrf(m0::TFIC, m1::TFIC, t::Real)
 
     φ(g0::Real,g1::Real,k::Real) = θ(g0,k) - θ(g1,k)
 
-    return 2*real(quadgk(k -> - 1 / 2π * log(cos(φ(g0,g1,k))^2 + sin(φ(g0,g1,k))^2 * exp(-2*1.0im*t*ε(g1,k))), 0, π)[1])
+    y = quadgk(k -> - 2 / 2π * log(cos(φ(g0,g1,k))^2 + sin(φ(g0,g1,k))^2 * exp(-2*1.0im*t*ε(g1,k))), 0, π)
+
+    return real(y[1]), y[2]
 end
