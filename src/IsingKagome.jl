@@ -9,7 +9,7 @@ IsingKagome(;J::Real = 1.0) = IsingKagome(J)
 """
 Helmholtz free Energy
 Infinite-size classical Ising model on the kagome lattice
-H = -J ∑<ᵢ,ⱼ> SᵢSⱼ
+H = J ∑<ᵢ,ⱼ> SᵢSⱼ
 
 [Ref: Entropy 27, 799 (2010)]
 """
