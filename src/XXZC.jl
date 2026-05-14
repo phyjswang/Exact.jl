@@ -8,7 +8,7 @@ end
 
 """
 Ground state energy
-infinite-size XXZ chain
+Infinite-size XXZ chain
 H = J∑ᵢ(SˣᵢSˣᵢ₊₁ + SʸᵢSʸᵢ₊₁) + ΔJ∑ᵢSᶻᵢSᶻᵢ₊₁
 
 [Ref: V. E. Korepin, N. M. Bogoliubov, A. G. Izergin, Quantum inverse scattering method and correlation functions, Cambridge University Press (1997)]

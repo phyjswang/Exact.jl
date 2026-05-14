@@ -18,3 +18,7 @@ Provide exact solutions for benchmarking in algorithm development.
 - Transverse field XY chain
   - Thermodynamic limit
     - Ground state energy
+
+- 2D classical Ising model
+  - Thermodynamic limit
+    - Helmholtz free energy

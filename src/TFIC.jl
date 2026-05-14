@@ -8,7 +8,7 @@ end
 
 """
 Ground state energy
-infinite-size transverse field Ising chain
+Infinite-size transverse field Ising chain
 H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 
 [Ref: Annals of Physics 57, 79 (1970)]
@@ -20,7 +20,7 @@ end
 
 """
 Helmholtz free energy
-infinite-size transverse field Ising chain
+Infinite-size transverse field Ising chain
 H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 
 [Ref: Annals of Physics 57, 79 (1970)]
@@ -33,7 +33,7 @@ end
 
 """
 Internal energy
-infinite-size transverse field Ising chain
+Infinite-size transverse field Ising chain
 H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 
 [Ref: Annals of Physics 57, 79 (1970)]
@@ -46,7 +46,7 @@ end
 
 """
 Loschmidt rate function
-infinite-size transverse field Ising chain
+Infinite-size transverse field Ising chain
 H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 
 [Ref: PRB 87, 195104 (2013)]

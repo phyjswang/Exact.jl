@@ -9,7 +9,7 @@ end
 
 """
 Ground state energy
-infinite-size TFXY chain
+Infinite-size TFXY chain
 H = -∑ᵢ(JxSˣᵢSˣᵢ₊₁ + JySʸᵢSʸᵢ₊₁) - h∑ᵢSᶻᵢ
 
 [Ref: SciPost Phys. Lect. Notes 82 (2024)]
