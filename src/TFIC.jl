@@ -15,7 +15,7 @@ H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 """
 function getgse(model::TFIC)
     @unpack J, g = model
-    return -2/π * (g+J/2) * ellipe(2J/g / (1 + J/2g)^2) / 2
+    return -2/π * abs(g+J/2) * ellipe(2J/g / (1 + J/2g)^2) / 2, 0
 end
 
 """

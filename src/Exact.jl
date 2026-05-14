@@ -7,11 +7,15 @@ using QuadGK
 abstract type AbstractModel end
 
 export TFIC
+export XXZC
+export TFXYC
 export getgse
 export getfe
 export getie
 export getlrf
 
 include("TFIC.jl")
+include("XXZC.jl")
+include("TFXYC.jl")
 
 end
