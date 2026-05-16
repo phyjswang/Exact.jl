@@ -19,6 +19,6 @@ Provide exact solutions for benchmarking in algorithm development.
   - Thermodynamic limit
     - Ground state energy
 
-- Classical Ising model on the square/kagome lattice
+- Classical Ising model on the square/kagome/triangular lattice
   - Thermodynamic limit
     - Helmholtz free energy
