@@ -1,10 +1,10 @@
 # 2D Ising model
 
-struct IsingKagome <: AbstractModel
-    J::Real
+struct IsingKagome{TJ<:Real} <: AbstractModel
+    J::TJ
 end
 
-IsingKagome(;J::Real = 1.0) = IsingKagome(J)
+IsingKagome(; J::Real = 1.0) = IsingKagome(J)
 
 """
 Helmholtz free Energy
@@ -15,8 +15,14 @@ H = J ∑<ᵢ,ⱼ> SᵢSⱼ
 """
 function getfe(model::IsingKagome, T::Real)
     @unpack J = model
-    c = cosh(2J/T)
-    s = sinh(2J/T)
-    F(x) = -T * log(16*((c^3-s^3)^2+3*c^2)+32*s*(s*c^2-c*s^2) * (cos(x[1])-cos(x[1]-x[2])+cos(x[2]))) *3 / (24*π^2)
+    x = 2J / T
+    c = cosh(x)
+    s = sinh(x)
+    c2 = c * c
+    c3ms3 = _cosh3_minus_sinh3(x, c, s)
+    sc2mcs2 = _sinh_cosh_difference(x, c, s)
+    offset = 16 * (c3ms3 * c3ms3 + 3 * c2)
+    amplitude = 32 * s * sc2mcs2
+    F(k) = -T * log(muladd(amplitude, _ising_lattice_sum(k[1], k[2]), offset)) / (8π^2)
     return hcubature(F, [0,0], [2π,2π])
 end

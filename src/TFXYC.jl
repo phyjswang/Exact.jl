@@ -1,10 +1,10 @@
 # TFXY Chain
 # H = -∑ᵢ(JₓSˣᵢSˣᵢ₊₁ + JySʸᵢSʸᵢ₊₁) - h∑ᵢSᶻᵢ
 
-struct TFXYC <: AbstractModel
-    Jx::Real
-    Jy::Real
-    h::Real
+struct TFXYC{TJx<:Real,TJy<:Real,Th<:Real} <: AbstractModel
+    Jx::TJx
+    Jy::TJy
+    h::Th
 end
 
 """
@@ -19,8 +19,13 @@ function getgse(model::TFXYC)
     Jx /= 4
     Jy /= 4
     h /= 2
-    J = Jx+Jy
-    κ = (Jx-Jy)/(Jx+Jy)
-    ε(k) = 2*abs(J)*√((h/J - cos(k))^2 + κ^2 * sin(k)^2)
-    return quadgk(k -> -ε(k)/(2π), 0, π)
+    J = Jx + Jy
+    κ = (Jx - Jy) / J
+    absJ = abs(J)
+    invJ = inv(J)
+    ε(k) = begin
+        s, c = sincos(k)
+        2 * absJ * hypot(h * invJ - c, κ * s)
+    end
+    return quadgk(k -> -ε(k) / (2π), 0, π)
 end

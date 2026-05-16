@@ -1,9 +1,15 @@
 # Transverse Field Ising Chain
 # H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 
-struct TFIC <: AbstractModel
-    J::Real
-    g::Real
+struct TFIC{TJ<:Real,Tg<:Real} <: AbstractModel
+    J::TJ
+    g::Tg
+end
+
+@inline function _tfic_energy(J::Real, g::Real, k::Real)
+    s, c = sincos(k)
+    halfJ = J / 2
+    return hypot(muladd(halfJ, c, g), halfJ * s) / 2
 end
 
 """
@@ -15,7 +21,10 @@ H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 """
 function getgse(model::TFIC)
     @unpack J, g = model
-    return -2/π * abs(g+J/2) * ellipe(2J/g / (1 + J/2g)^2) / 2, 0
+    halfJ = J / 2
+    scale = g + halfJ
+    parameter = 2 * J * g / (scale * scale)
+    return -abs(scale) * ellipe(parameter) / π, 0
 end
 
 """
@@ -27,8 +36,7 @@ H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 """
 function getfe(model::TFIC, T::Real)
     @unpack J, g = model
-    y = quadgk(k -> -T * 1/π * log(cosh(1/2/T*g*√(1+(J/2g)^2 + J/g * cos(k)))), 0, π)
-    return -T * log(2) + y[1], y[2]
+    return quadgk(k -> -T / π * _log2cosh(_tfic_energy(J, g, k) / T), 0, π)
 end
 
 """
@@ -40,8 +48,10 @@ H = -J Σᵢ Sᶻᵢ Sᶻᵢ₊₁ - g Σᵢ Sˣᵢ
 """
 function getie(model::TFIC, T::Real)
     @unpack J, g = model
-    y(k) = 1/2*g*√(1+(J/2g)^2 + J/g * cos(k))
-    return quadgk(k ->T^2 * 1/π *  -y(k) / T^2 * tanh(y(k)/T), 0, π)
+    return quadgk(k -> begin
+        y = _tfic_energy(J, g, k)
+        -y * tanh(y / T) / π
+    end, 0, π)
 end
 
 """
@@ -60,10 +70,10 @@ function getlrf(m0::TFIC, m1::TFIC, t::Real)
     g1 *= 2/J
     J /= 4
 
-    ε(g::Real,k::Real) = 2J* √((g-cos(k))^2 + sin(k)^2)
+    ε(g::Real, s::Real, c::Real) = 2J * hypot(g - c, s)
 
-    function θ(g::Real,k::Real)
-        θ1 = atan(sin(k) / (g-cos(k)))/2
+    function θ(g::Real, s::Real, c::Real)
+        θ1 = atan(s, g - c) / 2
         if θ1 < 0
             return θ1 + π/2
         else
@@ -71,9 +81,13 @@ function getlrf(m0::TFIC, m1::TFIC, t::Real)
         end
     end
 
-    φ(g0::Real,g1::Real,k::Real) = θ(g0,k) - θ(g1,k)
-
-    y = quadgk(k -> - 2 / 2π * log(cos(φ(g0,g1,k))^2 + sin(φ(g0,g1,k))^2 * exp(-2*1.0im*t*ε(g1,k))), 0, π)
+    y = quadgk(k -> begin
+        s, c = sincos(k)
+        φ = θ(g0, s, c) - θ(g1, s, c)
+        sinφ, cosφ = sincos(φ)
+        weight = muladd(sinφ * sinφ, cis(-2 * t * ε(g1, s, c)), cosφ * cosφ)
+        -log(weight) / π
+    end, 0, π)
 
     return real(y[1]), y[2]
 end
